@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Market</title>
+    <style>
+        table,
+        td,
+        th,
+        tr {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 2vw;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="max-width:75vw;">
+        <fieldset>
+            <legend>Add Product</legend>
+            <form id="product-form">
+                <input type="text" id="produk" placeholder="Product Name">
+                <input type="text" id="gambar" placeholder="Product Preview">
+                <select id="category" onchange="handleDate()">
+                    <option value="null" selected>Choose Category</option>
+                    <option value="General">General</option>
+                    <option value="FnB">FnB</option>
+                </select>
+                <input type="number" id="stok" placeholder="Stock">
+                <input type="number" id="harga" placeholder="Price">
+                <input type="date" id="expDate" placeholder="Expired Date" disabled>
+            </form>
+            <button type="button" onclick="getProduct()">Submit Product</button>
+            <br>
+            <br>
+            <br>
+            <span>Filter</span>
+            <form id="filter-form">
+                <input id="filterproduk" type="text" placeholder="Product Name"><br>
+                <input id="filterSKU" type="text" placeholder="SKU"><br>
+                <select id="filtercategory">
+                    <option value="null" selected>Choose Category</option>
+                    <option value="General">General</option>
+                    <option value="FnB">FnB</option>
+                </select><br>
+                <input id="filterharga" type="number" placeholder="Price"><br>
+            </form>
+            <button type="button" onclick="handleFilter()">Search</button>
+            <button type="button" onclick="handleReset()">Reset</button>
+        </fieldset>
+        <table>
+
+            <head>
+                <tr>
+                    <th>No</th>
+                    <th>Name</th>
+                    <th>SKU</th>
+                    <th>Preview</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>ExpDate</th>
+                    <th>Action</th>
+                </tr>
+            </head>
+
+            <tbody id="list-produk">
+
+            </tbody>
+        </table>
+    </div>
+</body>
+
+<script src="./index.js"></script>
+
+</html>
