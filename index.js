@@ -58,9 +58,22 @@ const getProduct = () => {
     form.elements["expDate"].disabled = true;
 }
 
-const printData = (data) => {
+const printData = (data, sku) => {
     document.getElementById("list-produk").innerHTML = data.map((val, idx) => {
-        return `<tr>
+        if (val.sku == sku) {
+            return `<tr>
+        <td>${idx + 1}</td>
+        <td> <input type="text" id="produkbaru" value="${val.name}"></td>
+        <td>${val.sku}</td>
+        <td><img src="${val.preview}" width=75px></td>
+        <td>${val.category}</td>
+        <td> <input type="number" id="stokbaru" value="${val.stok}"></td>
+        <td><input type="number" id="hargabaru" value="${val.harga}"></td>
+        <td>${val.expired ? val.expired : "-"}</td>
+        <td><button type="button" onclick="handleSave('${val.sku}')">Save</button> <br> <button type="button" onclick="handleCancel()">Cancel</button></td>
+        </tr > `
+        } else {
+            return `<tr>
         <td>${idx + 1}</td>
         <td>${val.name}</td>
         <td>${val.sku}</td>
@@ -71,6 +84,7 @@ const printData = (data) => {
         <td>${val.expired ? val.expired : "-"}</td>
         <td><button type="button" onclick="handleDelete('${val.sku}')">Hapus Data</button> <br> <button type="button" onclick="handleEdit('${val.sku}')">Edit Data</button></td>
         </tr > `
+        }
     }
     )
         .join("");
@@ -133,42 +147,14 @@ const handleDelete = (sku) => {
 }
 
 const handleEdit = (sku) => {
-    document.getElementById("list-produk").innerHTML = produk.map((val, idx) => {
-        if (val.sku == sku) {
-            return `<tr>
-        <td>${idx + 1}</td>
-        <td> <input type="text" id="produkbaru" value="${val.name}"></td>
-        <td>${val.sku}</td>
-        <td><img src="${val.preview}" width=75px></td>
-        <td>${val.category}</td>
-        <td> <input type="number" id="stokbaru" value="${val.stok}"></td>
-        <td><input type="number" id="hargabaru" value="${val.harga}"></td>
-        <td>${val.expired ? val.expired : "-"}</td>
-        <td><button type="button" onclick="handleSave('${val.sku}')">Save</button> <br> <button type="button" onclick="handleCancel()">Cancel</button></td>
-        </tr > `
-        } else {
-            return `<tr>
-        <td>${idx + 1}</td>
-        <td>${val.name}</td>
-        <td>${val.sku}</td>
-        <td><img src="${val.preview}" width=75px></td>
-        <td>${val.category}</td>
-        <td>${val.stok}</td>
-        <td>Rp. ${val.harga.toLocaleString('id')}</td>
-        <td>${val.expired ? val.expired : "-"}</td>
-        <td><button type="button" onclick="handleDelete('${val.sku}')">Hapus Data</button> <br> <button type="button" onclick="handleEdit('${val.sku}')">Edit Data</button></td>
-        </tr > `
-        }
-    }
-    )
-        .join("");
+    printData(produk, sku);
 }
 
 const handleSave = (sku) => {
     let index = produk.findIndex((val) => val.sku == sku);
     produk[index].name = document.getElementById("produkbaru").value
-    produk[index].stok = document.getElementById("stokbaru").value
-    produk[index].harga = document.getElementById("hargabaru").value
+    produk[index].stok = parseInt(document.getElementById("stokbaru").value)
+    produk[index].harga = parseInt(document.getElementById("hargabaru").value)
     printData(produk);
 }
 
