@@ -1,6 +1,7 @@
 
 let produk = [];
 let count = 0;
+let cart = [];
 class Produk {
     constructor(_sku, _preview, _nama, _category, _stok, _harga) {
         this.sku = _sku;
@@ -82,7 +83,9 @@ const printData = (data, sku) => {
         <td>${val.stok}</td>
         <td>Rp. ${val.harga.toLocaleString('id')}</td>
         <td>${val.expired ? val.expired : "-"}</td>
-        <td><button type="button" onclick="handleDelete('${val.sku}')">Hapus Data</button> <br> <button type="button" onclick="handleEdit('${val.sku}')">Edit Data</button></td>
+        <td><button type="button" onclick="handleDelete('${val.sku}')">Hapus Data</button> <br> 
+        <button type="button" onclick="handleEdit('${val.sku}')">Edit Data</button> <br>
+        <button type="button" onclick="handleBuy('${val.sku}')">Beli</button> </td>
         </tr > `
         }
     }
@@ -160,4 +163,96 @@ const handleSave = (sku) => {
 
 const handleCancel = () => {
     printData(produk);
+}
+
+class Cart {
+    constructor(_name, _sku, _preview, _qty, _harga) {
+        this.name = _name;
+        this.sku = _sku;
+        this.preview = _preview;
+        this.qty = _qty;
+        this.harga = _harga;
+    }
+}
+const printCart = () => {
+    document.getElementById("list-cart").innerHTML = cart.map((val, idx) => {
+        return `<tr>
+        <td>${idx + 1}</td>
+        <td>${val.name}</td>
+        <td>${val.sku}</td>
+        <td><img src="${val.preview}" width=75px></td>
+        <td>
+            <button type="button" onclick="handleDec('${val.sku}')">-</button>
+            ${val.qty}
+            <button type="button" onclick="handleInc('${val.sku}')">+</button>
+        </td>
+        <td>Rp. ${val.harga.toLocaleString('id')}</td>
+        <td>Rp. ${(val.qty * val.harga).toLocaleString('id')}</td>
+        <td><button type="button" onclick="handleDeleteCart('${val.sku}')">Hapus Data</button> <br> 
+        </tr > `
+    })
+        .join("");
+}
+const handleBuy = (sku) => {
+    let index = produk.findIndex((val) => val.sku == sku)
+    let indexcart = cart.findIndex((val) => val.sku == sku)
+    if (cart[indexcart]) {
+        cart[indexcart].qty = cart[indexcart].qty + 1;
+    }
+    else {
+        cart.push(new Cart(produk[index].name, produk[index].sku, produk[index].preview, 1, produk[index].harga));
+    }
+    produk[index].stok = produk[index].stok - 1;
+    printData(produk);
+    printCart();
+}
+
+const clearCart = () => {
+    for (let i = 0; i < produk.length; i++) {
+        for (let j = 0; j < cart.length; j++) {
+            if (cart[j].sku == produk[i].sku) {
+                produk[i].stok = produk[i].stok + cart[j].qty;
+            }
+        }
+    }
+    cart = [];
+    printData(produk);
+    printCart();
+}
+
+const handleDec = (sku) => {
+    let index = produk.findIndex((val) => val.sku == sku)
+    let indexcart = cart.findIndex((val) => val.sku == sku)
+    if (produk[index].stok > 0) {
+        produk[index].stok += 1;
+        cart[indexcart].qty -= 1;
+        printData(produk);
+        printCart();
+    }
+    else {
+        alert(`Stock Habis`);
+    }
+}
+
+const handleInc = (sku) => {
+    let index = produk.findIndex((val) => val.sku == sku)
+    let indexcart = cart.findIndex((val) => val.sku == sku)
+    if (produk[index].stok > 0) {
+        produk[index].stok -= 1;
+        cart[indexcart].qty += 1;
+        printData(produk);
+        printCart();
+    }
+    else {
+        alert(`Stock Habis`);
+    }
+}
+
+const handleDeleteCart = (sku) => {
+    let index = produk.findIndex((val) => val.sku == sku)
+    let indexcart = cart.findIndex((val) => val.sku == sku);
+    produk[index].stok = produk[index].stok + cart[indexcart].qty
+    cart.splice(indexcart, 1);
+    printData(produk);
+    printCart();
 }
