@@ -177,7 +177,7 @@ class Cart {
 const printCart = () => {
     document.getElementById("list-cart").innerHTML = cart.map((val, idx) => {
         return `<tr>
-        <td>${idx + 1}</td>
+        <td><input type="checkbox" id="${val.sku}"></td>
         <td>${val.name}</td>
         <td>${val.sku}</td>
         <td><img src="${val.preview}" width=75px></td>
@@ -211,15 +211,25 @@ const handleBuy = (sku) => {
     }
 }
 
-const clearCart = () => {
-    for (let i = 0; i < produk.length; i++) {
-        for (let j = 0; j < cart.length; j++) {
-            if (cart[j].sku == produk[i].sku) {
-                produk[i].stok = produk[i].stok + cart[j].qty;
+const deleteSomeCart = () => {
+    let deleteCart = [];
+    cart.forEach((val) => {
+        if (document.getElementById(val.sku).checked) {
+            deleteCart.push(val);
+        }
+    })
+    let konfirmasi = confirm(`Apakah yakin ingin menghapus barang belanja?`);
+    if (konfirmasi == true) {
+        for (let i = 0; i < deleteCart.length; i++) {
+            for (let j = 0; j < cart.length; j++) {
+                if (deleteCart[i].sku == cart[j].sku) {
+                    let index = produk.findIndex((val) => val.sku == cart[j].sku);
+                    produk[index].stok += cart[j].qty;
+                    cart.splice(j, 1);
+                }
             }
         }
     }
-    cart = [];
     printData(produk);
     printCart();
 }
