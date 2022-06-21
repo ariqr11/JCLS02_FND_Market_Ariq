@@ -196,15 +196,19 @@ const printCart = () => {
 const handleBuy = (sku) => {
     let index = produk.findIndex((val) => val.sku == sku)
     let indexcart = cart.findIndex((val) => val.sku == sku)
-    if (cart[indexcart]) {
-        cart[indexcart].qty = cart[indexcart].qty + 1;
+    if (produk[index].stok > 0) {
+        if (cart[indexcart]) {
+            cart[indexcart].qty = cart[indexcart].qty + 1;
+        }
+        else {
+            cart.push(new Cart(produk[index].name, produk[index].sku, produk[index].preview, 1, produk[index].harga));
+        }
+        produk[index].stok = produk[index].stok - 1;
+        printData(produk);
+        printCart();
+    } else {
+        alert(`Stock Habis`);
     }
-    else {
-        cart.push(new Cart(produk[index].name, produk[index].sku, produk[index].preview, 1, produk[index].harga));
-    }
-    produk[index].stok = produk[index].stok - 1;
-    printData(produk);
-    printCart();
 }
 
 const clearCart = () => {
@@ -223,14 +227,13 @@ const clearCart = () => {
 const handleDec = (sku) => {
     let index = produk.findIndex((val) => val.sku == sku)
     let indexcart = cart.findIndex((val) => val.sku == sku)
-    if (produk[index].stok > 0) {
-        produk[index].stok += 1;
-        cart[indexcart].qty -= 1;
-        printData(produk);
+    produk[index].stok += 1;
+    cart[indexcart].qty -= 1;
+    printData(produk);
+    printCart();
+    if (cart[indexcart].qty == 0) {
+        cart.splice(indexcart, 1);
         printCart();
-    }
-    else {
-        alert(`Stock Habis`);
     }
 }
 
