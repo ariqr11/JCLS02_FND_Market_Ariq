@@ -218,14 +218,19 @@ const deleteSomeCart = () => {
             deleteCart.push(val);
         }
     })
-    let konfirmasi = confirm(`Apakah yakin ingin menghapus barang belanja?`);
-    if (konfirmasi == true) {
-        for (let i = 0; i < deleteCart.length; i++) {
-            for (let j = 0; j < cart.length; j++) {
-                if (deleteCart[i].sku == cart[j].sku) {
-                    let index = produk.findIndex((val) => val.sku == cart[j].sku);
-                    produk[index].stok += cart[j].qty;
-                    cart.splice(j, 1);
+    if (deleteCart.length == 0) {
+        alert(`Silahkan pilih item terlebih dahulu`);
+    }
+    else {
+        let konfirmasi = confirm(`Apakah yakin ingin menghapus barang belanja?`);
+        if (konfirmasi == true) {
+            for (let i = 0; i < deleteCart.length; i++) {
+                for (let j = 0; j < cart.length; j++) {
+                    if (deleteCart[i].sku == cart[j].sku) {
+                        let index = produk.findIndex((val) => val.sku == cart[j].sku);
+                        produk[index].stok += cart[j].qty;
+                        cart.splice(j, 1);
+                    }
                 }
             }
         }
