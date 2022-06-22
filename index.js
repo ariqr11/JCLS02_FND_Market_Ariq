@@ -25,6 +25,8 @@ let produk = [
 let count = 4;
 let cart = [];
 let checkoutCart = [];
+let user = [];
+let reportTrans = [];
 
 const handleDate = () => {
     let form = document.getElementById("product-form");
@@ -33,6 +35,11 @@ const handleDate = () => {
     } else {
         form.elements["expDate"].disabled = true;
     }
+}
+
+const login = () => {
+    user.push(document.getElementById("user").value)
+    document.getElementById("user").value = null;
 }
 
 const getProduct = () => {
@@ -93,7 +100,7 @@ const printData = (data, sku) => {
         <td>${val.expired ? val.expired : "-"}</td>
         <td><button type="button" onclick="handleDelete('${val.sku}')">Hapus Data</button> <br> 
         <button type="button" onclick="handleEdit('${val.sku}')">Edit Data</button> <br>
-        <button type="button" onclick="handleBuy('${val.sku}')">Beli</button> </td>
+        <button type="button" id="buy" onclick="handleBuy('${val.sku}')">Beli</button> </td>
         </tr > `
         }
     }
@@ -202,20 +209,25 @@ const printCart = () => {
         .join("");
 }
 const handleBuy = (sku) => {
-    let index = produk.findIndex((val) => val.sku == sku)
-    let indexcart = cart.findIndex((val) => val.sku == sku)
-    if (produk[index].stok > 0) {
-        if (cart[indexcart]) {
-            cart[indexcart].qty = cart[indexcart].qty + 1;
+    if (user.length > 0) {
+        let index = produk.findIndex((val) => val.sku == sku)
+        let indexcart = cart.findIndex((val) => val.sku == sku)
+        if (produk[index].stok > 0) {
+            if (cart[indexcart]) {
+                cart[indexcart].qty = cart[indexcart].qty + 1;
+            }
+            else {
+                cart.push(new Cart(produk[index].name, produk[index].sku, produk[index].preview, 1, produk[index].harga));
+            }
+            produk[index].stok = produk[index].stok - 1;
+            printData(produk);
+            printCart();
+        } else {
+            alert(`Stock Habis`);
         }
-        else {
-            cart.push(new Cart(produk[index].name, produk[index].sku, produk[index].preview, 1, produk[index].harga));
-        }
-        produk[index].stok = produk[index].stok - 1;
-        printData(produk);
-        printCart();
-    } else {
-        alert(`Stock Habis`);
+    }
+    else {
+        alert(`Isi user terlebih dahulu`);
     }
 }
 
@@ -296,10 +308,12 @@ const checkOutCart = () => {
         </tr>`
     })
         .join("");
+
     let total = 0;
     for (let i = 0; i < checkoutCart.length; i++) {
         total += checkoutCart[i].qty * checkoutCart[i].harga;
     }
+
     document.getElementById("total-checkout").innerHTML = `
         <tr>
         <th>Total Pembayaran</th>
@@ -319,20 +333,51 @@ const checkOutCart = () => {
     }
     printCart();
 }
+
+let totalUang = 0;
 const payment = () => {
     let total = 0;
     for (let i = 0; i < checkoutCart.length; i++) {
         total += checkoutCart[i].qty * checkoutCart[i].harga;
     }
+    totalUang = total;
     let uang = parseInt(document.getElementById("uang-bayar").value);
     if (uang >= total) {
         document.getElementById("display").innerHTML = "";
         alert(`Pembayaran berhasil, kembalian anda Rp. ${(uang - total).toLocaleString('id')}`)
         checkoutCart = [];
         checkOutCart();
+        report();
     }
     else {
         document.getElementById("display").innerHTML = "Uang anda kurang";
         setTimeout(() => document.getElementById("display").innerHTML = "", 4000)
     }
+
 }
+
+const report = () => {
+    reportTrans.push({
+        name: user[user.length - 1],
+        total: totalUang
+    })
+    document.getElementById("report").innerHTML = reportTrans.map((val, idx) => {
+        return `<tr>
+        <td>${idx + 1}</td>
+        <td>${Date()}</td>
+        <td>${val.name}</td>
+        <td>Rp. ${(val.total).toLocaleString('id')}</td >
+        </tr>`
+    })
+        .join("");
+
+    let omset = 0;
+
+    for (let i = 0; i < reportTrans.length; i++) {
+        omset += reportTrans[i].total;
+    }
+    document.getElementById("omset").innerHTML = `Omset : ${omset.toLocaleString('id')}`
+    user = [];
+    totalUang = 0
+}
+

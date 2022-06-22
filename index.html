@@ -37,6 +37,12 @@
             <button type="button" onclick="getProduct()">Submit Product</button>
             <br>
             <br>
+            <span>Customer</span>
+            <br>
+            <input type="text" id="user" placeholder="Register">
+            <button type="button" onclick="login()">Login</button>
+            <br>
+            <br>
             <br>
             <span>Filter</span>
             <form id="filter-form">
@@ -117,6 +123,27 @@
             <table id="total-checkout">
             </table>
             <h2 id="display"></h2>
+        </fieldset>
+        <fieldset>
+            <legend>Report Transaction</legend>
+            <table>
+
+                <head>
+                    <tr>
+                        <th>No</th>
+                        <th>Date</th>
+                        <th>User</th>
+                        <th>Total Transaction</th>
+                    </tr>
+
+                </head>
+
+                <tbody id="report">
+
+                </tbody>
+
+            </table>
+            <h2 id="omset"></h2>
         </fieldset>
     </div>
 </body>
