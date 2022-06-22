@@ -1,23 +1,31 @@
-
-let produk = [];
-let count = 0;
-let cart = [];
 class Produk {
-    constructor(_sku, _preview, _nama, _category, _stok, _harga) {
+    constructor(_nama, _sku, _preview, _category, _stok, _harga) {
+        this.name = _nama;
         this.sku = _sku;
         this.preview = _preview;
-        this.name = _nama;
         this.category = _category;
         this.stok = _stok;
         this.harga = _harga
     }
 }
+
 class FnB extends Produk {
-    constructor(_sku, _preview, _nama, _category, _stok, _harga, _expired) {
-        super(_sku, _preview, _nama, _category, _stok, _harga);
+    constructor(_nama, _sku, _preview, _category, _stok, _harga, _expired) {
+        super(_nama, _sku, _preview, _category, _stok, _harga);
         this.expired = _expired
     }
 }
+
+let produk = [
+    new Produk("Topi", "SKU-01-123456", "https://cdn1-production-images-kly.akamaized.net/wRIF7UgcnVNjJOh-vVZwOtxTgdk=/1200x900/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/2754021/original/029823500_1552891993-foto_HL_topi.jpg", "General", 20, 35000),
+    new FnB("Telur", "SKU-02-654321", "https://asset.kompas.com/crops/WYVtX9H9wYlXZDwLmMqHiw2ZJc4=/0x7:740x500/750x500/data/photo/2020/11/13/5fae4aae98da3.jpg", "FnB", 20, 35000, "2022-06-20"),
+    new FnB("Kentang", "SKU-03-321456", "https://image-cdn.medkomtek.com/AqKL90eISrf_GbhYtRAuAi9Simc=/640x640/smart/klikdokter-media-buckets/medias/2302888/original/079980300_1547360960-Makan-Kentang-Mentah-ini-Bahayanya-By-success863-Shutterstock.jpg", "FnB", 20, 35000, "2022-07-20"),
+    new Produk("Jacket", "SKU-04-135642", "https://media.gq.com/photos/616f1e50af7badb1a03350cd/master/w_2000,h_1333,c_limit/Landing-Leathers-A-2-bomber-jacket.jpg", "General", 20, 35000)
+];
+let count = 4;
+let cart = [];
+let checkoutCart = [];
+
 const handleDate = () => {
     let form = document.getElementById("product-form");
     if (form.elements["category"].value == "FnB") {
@@ -30,9 +38,9 @@ const handleDate = () => {
 const getProduct = () => {
     let form = document.getElementById("product-form");
     count++;
+    let nama = form.elements["produk"].value;
     let sku = `SKU-${count < 10 ? `0${count}` : count}-${Math.round(Math.random() * 1000000)}`;
     let gambar = form.elements["gambar"].value;
-    let nama = form.elements["produk"].value;
     let kategori = form.elements["category"].value;
     let stok = parseInt(form.elements["stok"].value);
     let harga = parseInt(form.elements["harga"].value);
@@ -42,9 +50,9 @@ const getProduct = () => {
         alert("Isi semua data dengan benar");
     } else {
         if (kategori == "General") {
-            produk.push(new Produk(sku, gambar, nama, kategori, stok, harga))
+            produk.push(new Produk(nama, sku, gambar, kategori, stok, harga))
         } else if (kategori == "FnB") {
-            produk.push(new FnB(sku, gambar, nama, kategori, stok, harga, expDate))
+            produk.push(new FnB(nama, sku, gambar, kategori, stok, harga, expDate))
         }
     }
 
@@ -273,4 +281,57 @@ const handleDeleteCart = (sku) => {
     cart.splice(indexcart, 1);
     printData(produk);
     printCart();
+}
+
+const checkOutCart = () => {
+    cart.forEach((val) => {
+        if (document.getElementById(val.sku).checked) {
+            checkoutCart.push(val);
+        }
+    })
+    document.getElementById("list-checkout").innerHTML = checkoutCart.map((val, idx) => {
+        return `<tr>
+        <td>${val.sku}</td>
+        <td>Rp. ${(val.qty * val.harga).toLocaleString('id')}</td >
+        </tr>`
+    })
+        .join("");
+    let total = 0;
+    for (let i = 0; i < checkoutCart.length; i++) {
+        total += checkoutCart[i].qty * checkoutCart[i].harga;
+    }
+    document.getElementById("total-checkout").innerHTML = `
+        <tr>
+        <th>Total Pembayaran</th>
+        <th> Rp. ${total.toLocaleString('id')} </th>
+        </tr>
+        <tr>
+        <th>Uang Pembayaran</th>
+        <th><input type="number" id="uang-bayar"><button type="button" onclick="payment()">Payment</button></th>
+        </tr>`
+
+    for (let i = 0; i < checkoutCart.length; i++) {
+        for (let j = 0; j < cart.length; j++) {
+            if (checkoutCart[i].sku == cart[j].sku) {
+                cart.splice(j, 1);
+            }
+        }
+    }
+    printCart();
+}
+const payment = () => {
+    document.getElementById("display").innerHTML = "";
+    let total = 0;
+    for (let i = 0; i < checkoutCart.length; i++) {
+        total += checkoutCart[i].qty * checkoutCart[i].harga;
+    }
+    let uang = parseInt(document.getElementById("uang-bayar").value);
+    if (uang >= total) {
+        alert(`Pembayaran berhasil, kembalian anda Rp. ${(uang - total).toLocaleString('id')}`)
+        checkoutCart = [];
+        checkOutCart();
+    }
+    else {
+        document.getElementById("display").innerHTML = "Uang anda kurang"
+    }
 }

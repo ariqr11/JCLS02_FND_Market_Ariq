@@ -75,6 +75,7 @@
         <fieldset>
             <legend>Cart List</legend>
             <button type="button" onclick="deleteSomeCart()">Delete Some Cart</button>
+            <button type="button" onclick="checkOutCart()">Checkout Selected</button>
             <table>
 
                 <head>
@@ -94,6 +95,28 @@
 
                 </tbody>
             </table>
+        </fieldset>
+        <fieldset>
+            <legend>Checkout</legend>
+            <table>
+
+                <head>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Sub.Total</th>
+                    </tr>
+
+                </head>
+
+                <tbody id="list-checkout">
+
+                </tbody>
+
+            </table>
+            <br>
+            <table id="total-checkout">
+            </table>
+            <h2 id="display"></h2>
         </fieldset>
     </div>
 </body>
