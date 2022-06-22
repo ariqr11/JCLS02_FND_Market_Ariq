@@ -378,6 +378,5 @@ const report = () => {
     }
     document.getElementById("omset").innerHTML = `Omset : ${omset.toLocaleString('id')}`
     user = [];
-    totalUang = 0
 }
 
