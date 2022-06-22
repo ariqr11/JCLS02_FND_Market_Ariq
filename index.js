@@ -320,18 +320,19 @@ const checkOutCart = () => {
     printCart();
 }
 const payment = () => {
-    document.getElementById("display").innerHTML = "";
     let total = 0;
     for (let i = 0; i < checkoutCart.length; i++) {
         total += checkoutCart[i].qty * checkoutCart[i].harga;
     }
     let uang = parseInt(document.getElementById("uang-bayar").value);
     if (uang >= total) {
+        document.getElementById("display").innerHTML = "";
         alert(`Pembayaran berhasil, kembalian anda Rp. ${(uang - total).toLocaleString('id')}`)
         checkoutCart = [];
         checkOutCart();
     }
     else {
-        document.getElementById("display").innerHTML = "Uang anda kurang"
+        document.getElementById("display").innerHTML = "Uang anda kurang";
+        setTimeout(() => document.getElementById("display").innerHTML = "", 4000)
     }
 }
