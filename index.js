@@ -39,7 +39,6 @@ const handleDate = () => {
 
 const login = () => {
     user.push(document.getElementById("user").value)
-    document.getElementById("user").value = null;
 }
 
 const getProduct = () => {
@@ -295,6 +294,7 @@ const handleDeleteCart = (sku) => {
     printCart();
 }
 
+let total = 0;
 const checkOutCart = () => {
     cart.forEach((val) => {
         if (document.getElementById(val.sku).checked) {
@@ -309,7 +309,6 @@ const checkOutCart = () => {
     })
         .join("");
 
-    let total = 0;
     for (let i = 0; i < checkoutCart.length; i++) {
         total += checkoutCart[i].qty * checkoutCart[i].harga;
     }
@@ -334,17 +333,17 @@ const checkOutCart = () => {
     printCart();
 }
 
-let totalUang = 0;
 const payment = () => {
-    let total = 0;
-    for (let i = 0; i < checkoutCart.length; i++) {
-        total += checkoutCart[i].qty * checkoutCart[i].harga;
-    }
-    totalUang = total;
     let uang = parseInt(document.getElementById("uang-bayar").value);
     if (uang >= total) {
         document.getElementById("display").innerHTML = "";
         alert(`Pembayaran berhasil, kembalian anda Rp. ${(uang - total).toLocaleString('id')}`)
+        reportTrans.push({
+            date: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
+            name: user[user.length - 1],
+            total: total
+        })
+        total = 0;
         checkoutCart = [];
         checkOutCart();
         report();
@@ -357,14 +356,10 @@ const payment = () => {
 }
 
 const report = () => {
-    reportTrans.push({
-        name: user[user.length - 1],
-        total: totalUang
-    })
     document.getElementById("report").innerHTML = reportTrans.map((val, idx) => {
         return `<tr>
         <td>${idx + 1}</td>
-        <td>${Date()}</td>
+        <td>${val.date}</td>
         <td>${val.name}</td>
         <td>Rp. ${(val.total).toLocaleString('id')}</td >
         </tr>`
@@ -376,7 +371,8 @@ const report = () => {
     for (let i = 0; i < reportTrans.length; i++) {
         omset += reportTrans[i].total;
     }
-    document.getElementById("omset").innerHTML = `Omset : ${omset.toLocaleString('id')}`
+    document.getElementById("omset").innerHTML = `Omset : Rp. ${omset.toLocaleString('id')}`
     user = [];
+    document.getElementById("user").value = null;
 }
 
